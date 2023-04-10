@@ -2,10 +2,17 @@ package App;
 // package Software1;
 import java.io.*;
 import java.util.*;
-
+/**
+ * To count all the number of words in a poem loaded from a file and sort them from greatest to least
+ * @author rashaadswanson
+ *
+ */
 
 public class Application {
-	
+		/**
+		 * The main entry point for the application. 
+		 * @param args command line arguments
+		 */
 		public static void main(String[] args) {
 			String poem = loadfile("Poe.html");
 			poem=trimfile(poem);
@@ -19,8 +26,13 @@ public class Application {
 			}
 			
 			
-			
 		}
+		
+		/**
+		 * Sorts the words from greatest to least occurance 
+		 * @param map words and their occurence counts 
+		 * @return map of the words and thier occurances sorted
+		 */
 		public static Map<String, Integer> sortWords (Map<String, Integer> map) {
 			TreeMap<String, Integer> treeMap= new TreeMap<String, Integer>((a,b)->{
 				if(map.get(a)!=map.get(b))
@@ -30,6 +42,11 @@ public class Application {
 			treeMap.putAll(map);
 			return treeMap;
 		}
+		/**
+		 * It loads a file into a String
+		 * @param filename name of a file to be loaded
+		 * @return a string containing the files contents
+		 */
 		public static String loadfile(String filename) {
 			
 			StringBuilder builder = new StringBuilder();
@@ -47,6 +64,12 @@ public class Application {
 				
 			}
 		}
+		
+		/**
+		 * Trims the file of html header
+		 * @param s the string contents of the file 
+		 * @return a string of the file without the header 
+		 */
 		public static String trimfile (String s )
 		{
 			int startindex=s.indexOf("<h1>");
@@ -57,6 +80,11 @@ public class Application {
 			s=s.substring(startindex, endindex);
 			return s;
 		}
+		/**
+		 * Removes any html flags from a string
+		 * @param s the string with flags
+		 * @return the string without flags 
+		 */
 		public static String removeflags(String s) {
 			while(s.contains("<")) {
 				//Find the first open bracket
@@ -78,6 +106,11 @@ public class Application {
 			}
 			return s;
 		}
+		/**
+		 * Counts the number of times each word is used
+		 * @param s A string to be counted 
+		 * @return A sorted map of the words and thier occurence counts
+		 */
 		public static SortedMap<String,Integer> countwords(String s) {
 			String[] words =s.split("\\s+");
 			SortedMap<String,Integer> wordCount=new TreeMap <String, Integer>();
