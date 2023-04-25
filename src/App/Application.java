@@ -2,6 +2,7 @@ package App;
 // package Software1;
 import java.io.*;
 import java.util.*;
+import java.sql.*;
 /**
  * To count all the number of words in a poem loaded from a file and sort them from greatest to least
  * @author rashaadswanson
@@ -9,21 +10,39 @@ import java.util.*;
  */
 
 public class Application {
+	static Connection conn;
+
 		/**
 		 * The main entry point for the application. 
 		 * @param args command line arguments
 		 */
 		public static void main(String[] args) {
+			String url ="jdbc:mysql://localhost:3306/word%20occurrences";
+			try{
+				 conn=DriverManager.getConnection(url, "root", "password");
+				 Statement stmt =conn.createStatement();
+				 String query = "DELETE FROM word;" ;
+					 int cnt = stmt.executeUpdate(query);
+			}catch(SQLException e) {
+				throw new  Error("failed",e);
+			}
 			String poem = loadfile("Poe.html");
 			poem=trimfile(poem);
 			poem= removeflags(poem);
 			
-			poem=poem.replaceAll("[^a-zA-Z ]", " Pr").toLowerCase();
+			poem=poem.replaceAll("[^a-zA-Z ]", " ").toLowerCase();
 			SortedMap <String, Integer> wordCount= countwords(poem);
-			Map<String, Integer> sortedMap= sortWords(wordCount);
-			for(Map.Entry<String,Integer> entry: sortedMap.entrySet()) {
-				System.out.println(entry.getKey() + " " + entry.getValue().toString());
+			try{
+				 Statement stmt =conn.createStatement();
+				 ResultSet rs= stmt.executeQuery("SELECT word,count FROM word ORDER BY count DESC LIMIT 20;");
+				 while(rs.next()) {
+
+					 System.out.println(""+rs.getInt("count")+" "+rs.getString("word"));
+				 }
+			}catch(SQLException e) {
+				throw new  Error("failed",e);
 			}
+			
 			
 			
 		}
@@ -109,14 +128,22 @@ public class Application {
 		/**
 		 * Counts the number of times each word is used
 		 * @param s A string to be counted 
-		 * @return A sorted map of the words and thier occurence counts
+		 * @return A sorted map of the words and their occurence counts
 		 */
 		public static SortedMap<String,Integer> countwords(String s) {
 			String[] words =s.split("\\s+");
 			SortedMap<String,Integer> wordCount=new TreeMap <String, Integer>();
 			for(String w:words) {
-					wordCount.put(w, wordCount.getOrDefault(w, 0)+ 1);
-
+				
+					try {
+				//wordCount.put(w, wordCount.getOrDefault(w, 0)+ 1);
+					String query = "INSERT INTO word (word,count) VALUES ('"+w+"',1) ON DUPLICATE KEY UPDATE count = count +1;" ;
+					Statement stmt = conn.createStatement();
+					 int cnt = stmt.executeUpdate(query);
+					}catch(SQLException e) {
+						throw new Error("failed",e);
+					}
+					
 			}
 			return wordCount;
 		}
