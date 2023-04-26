@@ -2,7 +2,8 @@ package testrunner;
 import org.junit.runner.JUnitCore;
 import  org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import App.Test_load;
+
+import application.Test_load;
 
 public class test {
 public static void main(String[] args) {
